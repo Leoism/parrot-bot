@@ -73,15 +73,9 @@ function addInventory(chatID, userID, item) {
 		}
 	}
 
-	console.log(inventory[chatID][userID])
-
-	
-
 	writeDisk(__dirname + '/inventory.json', inventory)
 
 	return true
-
-
 
 }
 
@@ -121,7 +115,6 @@ function removeInventory(chatID, userID, item) {
 
     inventoryInChat.splice(inventoryInChat.indexOf(item), 1)	
 
-	console.log(inventoryInChat)
 	writeDisk(__dirname + '/inventory.json', inventory)
 }
 
