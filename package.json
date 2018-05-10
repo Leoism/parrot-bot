@@ -1,0 +1,12 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matheuss/google-translate-api/issues"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.28.0"
+  }
+}
