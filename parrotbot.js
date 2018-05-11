@@ -108,7 +108,8 @@ function removeInventory(chatID, userID, item) {
 	}
 
 	if(inventoryInChat.indexOf(item) < 0) {
-		return bot.sendMessage(chatID, 'You dont seem to have ' + item + ' in your inventory, try another item.')
+		bot.sendMessage(chatID, 'You dont seem to have ' + item + ' in your inventory, try another item.')
+     return false
 	}
 
 	bot.sendMessage(chatID, 'You fed the parrot ' + item) 
@@ -130,7 +131,7 @@ bot.on('message', function(msg) {
 		pickUser(msg.from.id, msg.chat.id)		
 	}
 
-	if(chat.indexOf(msg.chat.id) >= 0 && (chat.indexOf(msg.chat.id) == user.indexOf(msg.from.id))) {
+	if(chat.indexOf(msg.chat.id) >= 0 && (user[chat.indexOf(msg.chat.id)] == msg.from.id)) {
 			var message = 'squawk ' + msg.text.toUpperCase() + ' feed me! caw caw'
 
 			bot.sendMessage(msg.chat.id, mock(message))
@@ -138,7 +139,7 @@ bot.on('message', function(msg) {
 	}
 })
 
-bot.onText(/^[\/!#.]hunt$/, function (msg) {
+bot.onText(/^[\/!#.]fish$/, function (msg) {
 	var fishes = ['salmon', 'bass', 'goldfish', 'carp',
 				  'crappie', 'trout', 'tuna', 'mullet']
 
@@ -156,7 +157,34 @@ bot.onText(/^[\/!#.]hunt$/, function (msg) {
 
 bot.onText(/^[\/!#.]inventory$/, function (msg) {
 	if (!(callInventory(msg.chat.id, msg.from.id) == false)) {
-		var tmp = 'Your current inventory in: ' + msg.chat.title + '\n'
+		var tmp = 'Your current inventory in ' + msg.chat.title + ': \n'
+		tmp += callInventory(msg.chat.id, msg.from.id)
+
+		bot.sendMessage(msg.chat.id, tmp, {
+			parse_mode: 'markdown'
+		})
+	}
+})
+
+bot.onText(/^[\/!#.]fish(@\w+)/, function (msg) {
+	var fishes = ['salmon', 'bass', 'goldfish', 'carp',
+				  'crappie', 'trout', 'tuna', 'mullet']
+
+	var fish = fishes[Math.floor(Math.random() * fishes.length)]
+
+	if(Math.random() >= 0.7) {
+		bot.sendMessage(msg.chat.id, `Congratulations you caught a _${ fish }_! It has now been added to your inventory.`, {
+			parse_mode: 'markdown'
+		})
+	addInventory(msg.chat.id, msg.from.id, fish)
+	} else {
+		bot.sendMessage(msg.chat.id, 'Nothing seems to be biting')
+	}
+})
+
+bot.onText(/^[\/!#.]inventory(@\w+)/, function (msg) {
+	if (!(callInventory(msg.chat.id, msg.from.id) == false)) {
+		var tmp = 'Your current inventory in ' + msg.chat.title + ': \n'
 		tmp += callInventory(msg.chat.id, msg.from.id)
 
 		bot.sendMessage(msg.chat.id, tmp, {
@@ -169,11 +197,13 @@ bot.onText(/^[\/!#.]feed ([a-z]+)/, function(msg, match) {
 	var food = match[1]
 	var current = chat.indexOf(msg.chat.id)
 
-	if(msg.reply_to_message.from.id == 543696184 && user[current] == msg.from.id) {
+	if(msg.reply_to_message.from.id == 543696184 && user[current] == msg.from.id && removeInventory != false) {
 		removeInventory(msg.chat.id, msg.from.id, food)
 
 		chat.splice(current, 1)
 		user.splice(current, 1)
+	} else {
+		bot.sendMessage(msg.chat.id, `I'm sorry but I don't want food from you.`)
 	}
 	
 })
