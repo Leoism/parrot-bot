@@ -2,7 +2,7 @@
 const TeleBot = require('node-telegram-bot-api')
 const token 	= 'API_KEY'
 const bot 		= new TeleBot(token, {polling: true});
-
+const fs = require('fs')
 var user = []
 var chat = []
 
@@ -34,16 +34,12 @@ function mock(text) {
 }
 
 function writeDisk(name, data) {
-	var fs = require('fs')
-
 	var str = JSON.stringify(data, null, 4) 
 
 	fs.writeFileSync(name, str)
 }
 
 function readDisk(name) {
-	var fs = require('fs')
-
 	var str = fs.readFileSync(name)
 
 	return JSON.parse(str)
